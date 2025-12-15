@@ -18,3 +18,14 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+    App\EventListener\CacheControlListener:
+        arguments:
+            $environment: '%kernel.environment%'
+
+    App\EventListener\DisableCsrfOriginCheckListener:
+        arguments:
+            $environment: '%kernel.environment%'
+
+    App\Security\LoginAuthenticator:
+        arguments:
+            $environment: '%kernel.environment%'

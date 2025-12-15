@@ -1,0 +1,101 @@
+{{ form_start(form, { 'attr': { 'class': 'space-y-6', 'novalidate': 'novalidate' } }) }}
+
+    <!-- Basic Info Section -->
+    <div class="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-6 border border-blue-100">
+        <h3 class="text-base font-bold text-blue-900 mb-4 flex items-center gap-2">
+            <div class="bg-blue-600 text-white p-2 rounded-lg">
+                <i class="fa-solid fa-info-circle text-sm"></i>
+            </div>
+            Basic Information
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+                {{ form_label(form.name, 'Property Name', { 'label_attr': { 'class': 'block text-sm font-semibold text-gray-700 mb-2' } }) }}
+                {{ form_widget(form.name, { 'attr': {'class': 'w-full border-2 border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition', 'placeholder': 'Enter property name'} }) }}
+                {% if form.name.vars.errors %}<div class="text-red-600 text-xs mt-1">{{ form_errors(form.name) }}</div>{% endif %}
+            </div>
+            <div>
+                {{ form_label(form.price, 'Price (₱)', { 'label_attr': { 'class': 'block text-sm font-semibold text-gray-700 mb-2' } }) }}
+                {{ form_widget(form.price, { 'attr': {'class': 'w-full border-2 border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition', 'placeholder': 'Enter price'} }) }}
+                {% if form.price.vars.errors %}<div class="text-red-600 text-xs mt-1">{{ form_errors(form.price) }}</div>{% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Location & Size Section -->
+    <div class="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-6 border border-emerald-100">
+        <h3 class="text-base font-bold text-emerald-900 mb-4 flex items-center gap-2">
+            <div class="bg-emerald-600 text-white p-2 rounded-lg">
+                <i class="fa-solid fa-location-dot text-sm"></i>
+            </div>
+            Location & Size
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+                {{ form_label(form.location, 'Location', { 'label_attr': { 'class': 'block text-sm font-semibold text-gray-700 mb-2' } }) }}
+                {{ form_widget(form.location, { 'attr': {'class': 'w-full border-2 border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition', 'placeholder': 'Enter location'} }) }}
+                {% if form.location.vars.errors %}<div class="text-red-600 text-xs mt-1">{{ form_errors(form.location) }}</div>{% endif %}
+            </div>
+            <div>
+                {{ form_label(form.area, 'Area (m²)', { 'label_attr': { 'class': 'block text-sm font-semibold text-gray-700 mb-2' } }) }}
+                {{ form_widget(form.area, { 'attr': {'class': 'w-full border-2 border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition', 'placeholder': 'Enter area'} }) }}
+                {% if form.area.vars.errors %}<div class="text-red-600 text-xs mt-1">{{ form_errors(form.area) }}</div>{% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Property Details Section -->
+    <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 border border-purple-100">
+        <h3 class="text-base font-bold text-purple-900 mb-4 flex items-center gap-2">
+            <div class="bg-purple-600 text-white p-2 rounded-lg">
+                <i class="fa-solid fa-list text-sm"></i>
+            </div>
+            Property Details
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+                {{ form_label(form.type, 'Property Type', { 'label_attr': { 'class': 'block text-sm font-semibold text-gray-700 mb-2' } }) }}
+                {{ form_widget(form.type, { 'attr': {'class': 'w-full border-2 border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition'} }) }}
+                {% if form.type.vars.errors %}<div class="text-red-600 text-xs mt-1">{{ form_errors(form.type) }}</div>{% endif %}
+            </div>
+            <div>
+                {{ form_label(form.listingType, 'Listing Type', { 'label_attr': { 'class': 'block text-sm font-semibold text-gray-700 mb-2' } }) }}
+                {{ form_widget(form.listingType, { 'attr': {'class': 'w-full border-2 border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition'} }) }}
+                {% if form.listingType.vars.errors %}<div class="text-red-600 text-xs mt-1">{{ form_errors(form.listingType) }}</div>{% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Section -->
+    <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-6 border border-amber-100">
+        <h3 class="text-base font-bold text-amber-900 mb-4 flex items-center gap-2">
+            <div class="bg-amber-600 text-white p-2 rounded-lg">
+                <i class="fa-solid fa-image text-sm"></i>
+            </div>
+            Property Image
+        </h3>
+        <div>
+            {{ form_label(form.image, 'Upload Image', { 'label_attr': { 'class': 'block text-sm font-semibold text-gray-700 mb-3' } }) }}
+            <div class="border-2 border-dashed border-amber-300 rounded-lg p-8 text-center hover:border-amber-500 hover:bg-amber-50 transition cursor-pointer bg-white">
+                {{ form_widget(form.image, { 'attr': {'class': 'w-full', 'accept': 'image/*'} }) }}
+                <div class="text-gray-600 text-sm">
+                    <i class="fa-solid fa-cloud-arrow-up text-3xl text-amber-400 mb-2 block"></i>
+                    <p class="font-medium">Drag and drop your image here, or click to browse</p>
+                    <p class="text-xs text-gray-500 mt-2">PNG, JPG, GIF up to 10MB</p>
+                </div>
+            </div>
+            {% if form.image.vars.errors %}<div class="text-red-600 text-xs mt-2">{{ form_errors(form.image) }}</div>{% endif %}
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex gap-3 pt-2">
+        <button type="submit" class="inline-flex items-center bg-gradient-to-r from-orange-600 to-amber-600 text-white px-8 py-3 rounded-lg hover:shadow-lg transform hover:-translate-y-0.5 transition font-semibold text-sm">
+            <i class="fa-solid fa-check mr-2"></i> {{ button_label|default('Create') }}
+        </button>
+        <a href="{{ path('admin_property_index') }}" class="inline-flex items-center bg-gray-300 text-gray-800 px-8 py-3 rounded-lg hover:bg-gray-400 transition font-semibold text-sm">
+            <i class="fa-solid fa-arrow-left mr-2"></i> Cancel
+        </a>
+    </div>
+
+{{ form_end(form) }}

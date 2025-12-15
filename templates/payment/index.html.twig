@@ -1,0 +1,232 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Payment - {{ property.name }} - HomeFind{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gradient-to-b from-gray-50 to-white py-12">
+    <div class="container mx-auto px-6">
+        {# Back Button #}
+        <a href="{{ path('public_property_index') }}" class="inline-flex items-center text-emerald-600 hover:text-emerald-700 mb-8">
+            <i class="fa-solid fa-arrow-left mr-2"></i> Back to Properties
+        </a>
+
+        <h1 class="text-3xl font-bold text-gray-800 mb-8">
+            <i class="fa-solid fa-credit-card text-emerald-600 mr-2"></i>Secure Payment
+        </h1>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {# Payment Form #}
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-xl shadow-lg p-8">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Payment Details</h2>
+
+                    {# Payment Methods #}
+                    <div class="mb-8">
+                        <h3 class="text-lg font-semibold text-gray-700 mb-4">Select Payment Method</h3>
+                        <div class="space-y-3">
+                            <label class="flex items-center p-4 border-2 border-emerald-600 rounded-lg cursor-pointer bg-emerald-50">
+                                <input type="radio" name="paymentMethod" value="credit_card" checked class="w-4 h-4 text-emerald-600">
+                                <span class="ml-3 flex items-center">
+                                    <i class="fa-solid fa-credit-card text-emerald-600 mr-2"></i>
+                                    <span class="font-semibold">Credit/Debit Card</span>
+                                </span>
+                            </label>
+
+                            <label class="flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-emerald-600 hover:bg-emerald-50">
+                                <input type="radio" name="paymentMethod" value="gcash" class="w-4 h-4 text-emerald-600">
+                                <span class="ml-3 flex items-center">
+                                    <i class="fa-solid fa-mobile text-blue-600 mr-2"></i>
+                                    <span class="font-semibold">GCash</span>
+                                </span>
+                            </label>
+
+                            <label class="flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-emerald-600 hover:bg-emerald-50">
+                                <input type="radio" name="paymentMethod" value="bank_transfer" class="w-4 h-4 text-emerald-600">
+                                <span class="ml-3 flex items-center">
+                                    <i class="fa-solid fa-building text-red-600 mr-2"></i>
+                                    <span class="font-semibold">Bank Transfer</span>
+                                </span>
+                            </label>
+
+                            <label class="flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-emerald-600 hover:bg-emerald-50">
+                                <input type="radio" name="paymentMethod" value="installment" class="w-4 h-4 text-emerald-600">
+                                <span class="ml-3 flex items-center">
+                                    <i class="fa-solid fa-calendar text-purple-600 mr-2"></i>
+                                    <span class="font-semibold">Installment Plan</span>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    {# Credit Card Form #}
+                    <div id="creditCardForm" class="border-t pt-8">
+                        <h3 class="text-lg font-semibold text-gray-700 mb-4">Card Information</h3>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Cardholder Name</label>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="John Doe">
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Card Number</label>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="1234 5678 9012 3456" maxlength="19">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Expiry Date</label>
+                                <input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="MM/YY" maxlength="5">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">CVV</label>
+                                <input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="123" maxlength="3">
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Terms and Conditions #}
+                    <div class="mt-8 pt-8 border-t">
+                        <label class="flex items-start">
+                            <input type="checkbox" class="mt-1 w-4 h-4 text-emerald-600">
+                            <span class="ml-3 text-sm text-gray-700">
+                                I agree to the <a href="#" class="text-emerald-600 hover:underline font-semibold">Terms and Conditions</a> and <a href="#" class="text-emerald-600 hover:underline font-semibold">Privacy Policy</a>
+                            </span>
+                        </label>
+                    </div>
+
+                    <button onclick="processPayment()" class="w-full mt-6 bg-emerald-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-emerald-700 transition">
+                        <i class="fa-solid fa-lock mr-2"></i>Complete Payment
+                    </button>
+                </div>
+            </div>
+
+            {# Order Summary #}
+            <div>
+                <div class="bg-white rounded-xl shadow-lg p-6 sticky top-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Order Summary</h3>
+
+                    <div class="space-y-4 mb-6">
+                        <div>
+                            <p class="text-gray-600 text-sm">Property</p>
+                            <p class="font-semibold text-gray-800">{{ property.name }}</p>
+                        </div>
+
+                        <div class="border-b pb-4">
+                            <p class="text-gray-600 text-sm">Location</p>
+                            <p class="font-semibold text-gray-800">{{ property.location }}</p>
+                        </div>
+
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-gray-700">
+                                <span>Down Payment (10%)</span>
+                                <span class="font-semibold">₱{{ (property.price * 0.1)|number_format(2) }}</span>
+                            </div>
+                            <div class="flex justify-between text-gray-700">
+                                <span>Processing Fee</span>
+                                <span class="font-semibold">₱2,500.00</span>
+                            </div>
+                            <div class="flex justify-between text-gray-700">
+                                <span>Admin Fee</span>
+                                <span class="font-semibold">₱1,000.00</span>
+                            </div>
+                        </div>
+
+                        <div class="border-t pt-4">
+                            <div class="flex justify-between items-center">
+                                <span class="text-lg font-bold text-gray-800">Total Amount</span>
+                                <span class="text-2xl font-bold text-emerald-600">
+                                    ₱{{ (property.price * 0.1 + 3500)|number_format(2) }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <p class="text-sm text-blue-700">
+                            <i class="fa-solid fa-info-circle mr-2"></i>
+                            <strong>Note:</strong> This is only the down payment. The remaining balance will be due upon property verification.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function processPayment() {
+    const method = document.querySelector('input[name="paymentMethod"]:checked').value;
+    const termsAccepted = document.querySelector('input[type="checkbox"]').checked;
+
+    if (!termsAccepted) {
+        alert('Please accept the Terms and Conditions');
+        return;
+    }
+
+    // Show processing modal
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+    modal.innerHTML = `
+        <div class="bg-white rounded-lg shadow-lg p-8 max-w-sm mx-4 text-center">
+            <div class="animate-spin mb-4">
+                <i class="fa-solid fa-spinner text-emerald-600 text-3xl"></i>
+            </div>
+            <h3 class="text-lg font-bold text-gray-800 mb-2">Processing Payment</h3>
+            <p class="text-gray-600">Please wait while we process your payment...</p>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+
+    // Simulate payment processing (2-3 seconds)
+    setTimeout(() => {
+        // Call backend to update property status
+        const propertyId = {{ property.id }};
+        
+        fetch(`/payment/${propertyId}/complete`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            modal.remove();
+            
+            if (data.success) {
+                // Show success modal
+                const successModal = document.createElement('div');
+                successModal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+                successModal.innerHTML = `
+                    <div class="bg-white rounded-lg shadow-lg p-8 max-w-sm mx-4 text-center">
+                        <div class="flex items-center justify-center w-16 h-16 mx-auto bg-green-100 rounded-full mb-4">
+                            <i class="fa-solid fa-check text-green-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-2">Payment Successful!</h3>
+                        <p class="text-gray-600 mb-6">
+                            Your payment has been processed successfully.<br>
+                            <strong class="text-emerald-600">Property status updated to: SOLD</strong><br>
+                            You will receive a confirmation email shortly.
+                        </p>
+                        <button onclick="window.location.href='{{ path("public_property_index") }}'" class="bg-emerald-600 text-white px-6 py-2 rounded-lg hover:bg-emerald-700 transition font-medium">
+                            <i class="fa-solid fa-home mr-2"></i>Back to Home
+                        </button>
+                    </div>
+                `;
+                
+                document.body.appendChild(successModal);
+            } else {
+                alert('Payment failed: ' + data.message);
+                window.location.href = '{{ path("public_property_index") }}';
+            }
+        })
+        .catch(error => {
+            modal.remove();
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        });
+    }, 2000);
+}
+</script>
+{% endblock %}

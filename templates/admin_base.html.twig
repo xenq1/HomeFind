@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin - {% block admin_title %}{% endblock %}{% endblock %}</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    {% block stylesheets %}{% endblock %}
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+            <div class="w-full py-4 px-6 flex items-center justify-between">
+                <a href="{{ path('app_dashboard') }}" class="text-2xl font-bold text-emerald-600 flex items-center gap-2">
+                    <i class="fa-solid fa-home"></i> HomeFind
+                </a>
+                <nav class="flex items-center gap-4">
+                    {% if app.user %}
+                        <div class="relative" x-data="{ open: false }">
+                            <button @click="open = !open" class="px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                                <i class="fa-solid fa-user-circle"></i> {{ app.user.userIdentifier }}
+                                <i class="fa-solid fa-chevron-down text-xs" :class="{ 'rotate-180': open }"></i>
+                            </button>
+                            <div @click.away="open = false" x-show="open" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10">
+                                <a href="{{ path('app_logout') }}" class="block w-full text-left px-4 py-3 text-red-600 hover:bg-gray-100">
+                                    <i class="fa-solid fa-sign-out-alt mr-2"></i> Logout
+                                </a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <a href="{{ path('app_login') }}" class="text-emerald-600 hover:underline">Login</a>
+                    {% endif %}
+                </nav>
+            </div>
+    </header>
+
+    <div class="flex flex-1 w-full gap-6">
+        <!-- Sidebar panel -->
+        <aside class="w-64 bg-gradient-to-b from-emerald-50 to-blue-50 shadow-lg sticky top-[72px] h-[calc(100vh-72px)] overflow-y-auto border-r border-emerald-100">
+            <div class="p-6">
+                <div class="mb-6">
+                    <div class="bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-xl p-3 text-white mb-2">
+                        <h2 class="text-sm font-bold uppercase tracking-wide">
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <i class="fa-solid fa-crown mr-2"></i>Admin Panel
+                            {% elseif is_granted('ROLE_STAFF') %}
+                                <i class="fa-solid fa-briefcase mr-2"></i>Staff Panel
+                            {% endif %}
+                        </h2>
+                    </div>
+                </div>
+                <ul class="space-y-1 text-sm">
+                    <li>
+                        <a href="{{ path('app_dashboard') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-white hover:shadow-md hover:text-emerald-600 transition-all duration-200">
+                            <i class="fa-solid fa-chart-line text-emerald-600 w-5"></i>
+                            <span class="font-medium">Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ path('admin_property_index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-white hover:shadow-md hover:text-emerald-600 transition-all duration-200">
+                            <i class="fa-solid fa-house text-emerald-600 w-5"></i>
+                            <span class="font-medium">Property</span>
+                        </a>
+                    </li>
+                    {% if is_granted('ROLE_ADMIN') %}
+                    <li>
+                        <a href="{{ path('app_user_index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-white hover:shadow-md hover:text-emerald-600 transition-all duration-200">
+                            <i class="fa-solid fa-user text-emerald-600 w-5"></i>
+                            <span class="font-medium">User</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ path('app_activity_logs') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-white hover:shadow-md hover:text-emerald-600 transition-all duration-200">
+                            <i class="fa-solid fa-history text-emerald-600 w-5"></i>
+                            <span class="font-medium">Activity Log</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <main class="flex-1 bg-gray-100 overflow-auto pr-6 pb-6">
+            {% block admin_content %}{% endblock %}
+        </main>
+    </div>
+
+    {% block javascripts %}{% endblock %}
+</body>
+</html>

@@ -1,11 +1,14 @@
 # Enable stateless CSRF protection for forms and logins/logouts
 framework:
-    form:
-        csrf_protection:
-            token_id: submit
+    secret: '%env(APP_SECRET)%'
+
+    session:
+        enabled: true
 
     csrf_protection:
+        check_header: true
         stateless_token_ids:
             - submit
             - authenticate
             - logout
+        enabled: true

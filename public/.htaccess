@@ -1,0 +1,20 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php [QSA,L]
+</IfModule>
+
+<IfModule mod_headers.c>
+    # Disable caching for dynamic content in development
+    <FilesMatch "\.(php)$">
+        Header Set Cache-Control "no-cache, no-store, must-revalidate, max-age=0"
+        Header Set Pragma "no-cache"
+        Header Set Expires "0"
+    </FilesMatch>
+
+    # Allow caching for static assets
+    <FilesMatch "\.(jpg|jpeg|png|gif|ico|css|js|svg|woff|woff2|ttf|eot)$">
+        Header Set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+</IfModule>

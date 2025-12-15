@@ -1,0 +1,170 @@
+{% extends 'admin_base.html.twig' %}
+
+{% block admin_title %}Dashboard{% endblock %}
+
+{% block admin_content %}
+<div class="w-full h-full py-6 px-6">
+    <!-- Header Section -->
+    <div class="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl p-8 mb-8 border border-emerald-100">
+        <h1 class="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent flex items-center gap-3">
+            <div class="bg-gradient-to-br from-emerald-100 to-teal-50 p-3 rounded-xl border border-emerald-200">
+                <i class="fa-solid fa-chart-line text-emerald-600 text-xl"></i>
+            </div>
+            {% if is_granted('ROLE_STAFF') %}
+                Staff Dashboard
+            {% else %}
+                Admin Dashboard
+            {% endif %}
+        </h1>
+        <p class="text-gray-600 mt-2">Overview of your property management system</p>
+    </div>
+
+    <!-- Main Container -->
+    <div class="bg-gradient-to-br from-white to-gray-50 border border-emerald-100 rounded-2xl shadow-lg overflow-hidden">
+        <div class="p-8">
+            <!-- Statistics Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+                {% if is_granted('ROLE_ADMIN') %}
+                <!-- Total Users -->
+                <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl border border-blue-200 p-6 hover:shadow-lg transition">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-blue-600 text-sm font-semibold">Total Users</p>
+                            <p class="text-3xl font-bold text-blue-900 mt-2">{{ totalUsers }}</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-blue-200 to-blue-300 rounded-2xl p-4">
+                            <i class="fa-solid fa-users text-blue-700 text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Total Properties -->
+                <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl border border-green-200 p-6 hover:shadow-lg transition">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-green-600 text-sm font-semibold">Total Properties</p>
+                            <p class="text-3xl font-bold text-green-900 mt-2">{{ totalProperties }}</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-green-200 to-green-300 rounded-2xl p-4">
+                            <i class="fa-solid fa-house text-green-700 text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Available Properties -->
+                <div class="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl border border-emerald-200 p-6 hover:shadow-lg transition">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-emerald-600 text-sm font-semibold">Available</p>
+                            <p class="text-3xl font-bold text-emerald-900 mt-2">{{ availableProperties }}</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-emerald-200 to-emerald-300 rounded-2xl p-4">
+                            <i class="fa-solid fa-circle-check text-emerald-700 text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sold Properties -->
+                <div class="bg-gradient-to-br from-red-50 to-red-100 rounded-2xl border border-red-200 p-6 hover:shadow-lg transition">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-red-600 text-sm font-semibold">Sold/Rented</p>
+                            <p class="text-3xl font-bold text-red-900 mt-2">{{ soldProperties + rentProperties }}</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-red-200 to-red-300 rounded-2xl p-4">
+                            <i class="fa-solid fa-lock text-red-700 text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="border-gray-200 mb-8">
+
+            <!-- Detailed Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Property Status Breakdown -->
+                <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl border border-purple-200 p-6">
+                    <h2 class="text-lg font-bold text-purple-900 mb-6 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-pie text-purple-600 text-xl"></i>
+                        Property Status Breakdown
+                    </h2>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-purple-700 font-medium">Available</span>
+                            <div class="flex items-center gap-3">
+                                <div class="w-40 h-3 bg-purple-200 rounded-full overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r from-green-400 to-green-500" style="width: {% if totalProperties > 0 %}{{ (availableProperties / totalProperties * 100)|round }}{% else %}0{% endif %}%"></div>
+                                </div>
+                                <span class="text-purple-900 font-bold text-lg">{{ availableProperties }}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-purple-700 font-medium">Sold</span>
+                            <div class="flex items-center gap-3">
+                                <div class="w-40 h-3 bg-purple-200 rounded-full overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r from-red-400 to-red-500" style="width: {% if totalProperties > 0 %}{{ (soldProperties / totalProperties * 100)|round }}{% else %}0{% endif %}%"></div>
+                                </div>
+                                <span class="text-purple-900 font-bold text-lg">{{ soldProperties }}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-purple-700 font-medium">On Rent</span>
+                            <div class="flex items-center gap-3">
+                                <div class="w-40 h-3 bg-purple-200 rounded-full overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r from-blue-400 to-blue-500" style="width: {% if totalProperties > 0 %}{{ (rentProperties / totalProperties * 100)|round }}{% else %}0{% endif %}%"></div>
+                                </div>
+                                <span class="text-purple-900 font-bold text-lg">{{ rentProperties }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl border border-orange-200 p-6">
+                    <h2 class="text-lg font-bold text-orange-900 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-lightning text-orange-600 text-xl"></i>
+                        Quick Actions
+                    </h2>
+                    <div class="space-y-3">
+                        <a href="{{ path('admin_property_new') }}" class="flex items-center gap-3 p-3 rounded-xl bg-white hover:bg-emerald-50 transition border border-orange-100 hover:border-emerald-300">
+                            <div class="bg-gradient-to-br from-emerald-100 to-emerald-200 p-2 rounded-lg">
+                                <i class="fa-solid fa-plus text-emerald-600"></i>
+                            </div>
+                            <span class="text-orange-900 font-medium">Create New Property</span>
+                        </a>
+                        {% if is_granted('ROLE_ADMIN') %}
+                        <a href="{{ path('app_user_new') }}" class="flex items-center gap-3 p-3 rounded-xl bg-white hover:bg-blue-50 transition border border-orange-100 hover:border-blue-300">
+                            <div class="bg-gradient-to-br from-blue-100 to-blue-200 p-2 rounded-lg">
+                                <i class="fa-solid fa-user-plus text-blue-600"></i>
+                            </div>
+                            <span class="text-orange-900 font-medium">Add New User</span>
+                        </a>
+                        {% endif %}
+                        <a href="{{ path('admin_property_index') }}" class="flex items-center gap-3 p-3 rounded-xl bg-white hover:bg-purple-50 transition border border-orange-100 hover:border-purple-300">
+                            <div class="bg-gradient-to-br from-purple-100 to-purple-200 p-2 rounded-lg">
+                                <i class="fa-solid fa-list text-purple-600"></i>
+                            </div>
+                            <span class="text-orange-900 font-medium">View All Properties</span>
+                        </a>
+                        {% if is_granted('ROLE_ADMIN') %}
+                        <a href="{{ path('app_user_index') }}" class="flex items-center gap-3 p-3 rounded-xl bg-white hover:bg-violet-50 transition border border-orange-100 hover:border-violet-300">
+                            <div class="bg-gradient-to-br from-violet-100 to-violet-200 p-2 rounded-lg">
+                                <i class="fa-solid fa-users text-violet-600"></i>
+                            </div>
+                            <span class="text-orange-900 font-medium">View All Users</span>
+                        </a>
+                        <a href="{{ path('app_activity_logs') }}" class="flex items-center gap-3 p-3 rounded-xl bg-white hover:bg-pink-50 transition border border-orange-100 hover:border-pink-300">
+                            <div class="bg-gradient-to-br from-pink-100 to-pink-200 p-2 rounded-lg">
+                                <i class="fa-solid fa-clock text-pink-600"></i>
+                            </div>
+                            <span class="text-orange-900 font-medium">View Activity Logs</span>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

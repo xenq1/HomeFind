@@ -1,0 +1,176 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Find Your Dream Home - HomeFind{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <div class="container mx-auto py-12 px-6">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">
+                <i class="fa-solid fa-home text-emerald-600 mr-2"></i>Find Your Dream Home
+            </h1>
+            <p class="text-gray-600">Browse available properties and find the perfect place for you</p>
+        </div>
+
+        {# Filter by Type #}
+        <div class="mb-8 bg-white rounded-lg shadow p-6">
+            <h2 class="text-lg font-semibold mb-4">Filter by Type</h2>
+            <div class="flex flex-wrap gap-3">
+                <a href="{{ path('public_property_index') }}" class="px-4 py-2 rounded-lg {% if not selectedType %}bg-emerald-600 text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">
+                    All Types
+                </a>
+                {% for type in ['House', 'Apartment', 'Condo', 'Studio', 'Townhouse', 'Land'] %}
+                    <a href="{{ path('public_property_index', {'type': type}) }}" class="px-4 py-2 rounded-lg {% if selectedType == type %}bg-emerald-600 text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">
+                        {{ type }}
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        {# Property List #}
+        {% if properties is not empty %}
+            <div class="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6">
+                {% for property in properties %}
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition duration-300">
+                        {% if property.image %}
+                            <img src="{{ asset(property.image) }}" alt="{{ property.name }}" class="h-48 w-full object-cover">
+                        {% else %}
+                            <div class="h-48 w-full bg-gray-300 flex items-center justify-center">
+                                <i class="fa-solid fa-image text-gray-400 text-4xl"></i>
+                            </div>
+                        {% endif %}
+
+                        <div class="p-5">
+                            <h2 class="text-xl font-semibold mb-1 text-gray-800">{{ property.name }}</h2>
+                            <p class="text-gray-600 text-sm mb-3">
+                                <i class="fa-solid fa-map-marker text-emerald-600"></i> {{ property.location }}
+                            </p>
+                            
+                            <div class="mb-4">
+                                <p class="text-2xl font-bold text-emerald-600">₱{{ property.price|number_format(2, '.', ',') }}</p>
+                            </div>
+
+                            <div class="space-y-2 text-sm text-gray-700 mb-4">
+                                <div class="flex items-center justify-between">
+                                    <span><i class="fa-solid fa-ruler text-blue-500 mr-2"></i>Area</span>
+                                    <span class="font-semibold">{{ property.area }} m²</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span><i class="fa-solid fa-building text-purple-500 mr-2"></i>Type</span>
+                                    <span class="font-semibold">{{ property.type ?? 'N/A' }}</span>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                {% if property.status == 'available' %}
+                                    <span class="inline-block bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-full">
+                                        <i class="fa-solid fa-circle-check mr-1"></i> Available
+                                    </span>
+                                {% elseif property.status == 'sold' %}
+                                    <span class="inline-block bg-red-100 text-red-700 text-xs font-semibold px-3 py-1 rounded-full">
+                                        <i class="fa-solid fa-check-double mr-1"></i> Sold
+                                    </span>
+                                {% elseif property.status == 'on rent' %}
+                                    <span class="inline-block bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">
+                                        <i class="fa-solid fa-key mr-1"></i> On Rent
+                                    </span>
+                                {% endif %}
+                            </div>
+
+                            <div class="flex gap-2">
+                                <a href="{{ path('public_property_show', {'id': property.id}) }}" class="flex-1 inline-block text-center bg-emerald-600 text-white px-3 py-2 rounded-lg hover:bg-emerald-700 transition text-sm font-medium">
+                                    <i class="fa-solid fa-eye mr-1"></i>View Details
+                                </a>
+                                {% if property.status == 'available' %}
+                                    {% if property.listingType == 'for_rent' %}
+                                        <button onclick="availProperty({{ property.id }}, '{{ property.name|escape('js') }}')" class="flex-1 inline-block text-center bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition text-sm font-medium">
+                                            <i class="fa-solid fa-key mr-1"></i>Rent Now
+                                        </button>
+                                    {% else %}
+                                        <button onclick="availProperty({{ property.id }}, '{{ property.name|escape('js') }}')" class="flex-1 inline-block text-center bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition text-sm font-medium">
+                                            <i class="fa-solid fa-credit-card mr-1"></i>Buy Now
+                                        </button>
+                                    {% endif %}
+                                {% else %}
+                                    <button disabled class="flex-1 inline-block text-center bg-gray-400 text-white px-3 py-2 rounded-lg cursor-not-allowed text-sm font-medium">
+                                        <i class="fa-solid fa-lock mr-1"></i>Not Available
+                                    </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-12 bg-white rounded-lg shadow">
+                <i class="fa-solid fa-inbox text-gray-400 text-5xl mb-4"></i>
+                <p class="text-gray-500 text-lg">No properties found for this type.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+function availProperty(propertyId, propertyName) {
+    if (!{{ app.user ? 'true' : 'false' }}) {
+        alert('Please login to avail this property');
+        window.location.href = '{{ path("app_login") }}';
+        return;
+    }
+
+    // Create modal dialog
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+    modal.innerHTML = `
+        <div class="bg-white rounded-lg shadow-lg p-8 max-w-sm mx-4">
+            <div class="flex items-center justify-center w-12 h-12 mx-auto bg-blue-100 rounded-full mb-4">
+                <i class="fa-solid fa-question text-blue-600 text-xl"></i>
+            </div>
+            <h3 class="text-lg font-bold text-gray-800 text-center mb-2">Avail Property?</h3>
+            <p class="text-gray-600 text-center mb-6">
+                Do you want to avail "<strong>${propertyName}</strong>"?<br>
+                <span class="text-sm">Our agent will contact you within 24 hours.</span>
+            </p>
+            <div class="flex gap-3">
+                <button onclick="this.closest('.fixed').remove()" class="flex-1 bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400 transition font-medium">
+                    <i class="fa-solid fa-times mr-2"></i>No
+                </button>
+                <button onclick="confirmAvail(${propertyId}, '${propertyName}', event)" class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition font-medium">
+                    <i class="fa-solid fa-check mr-2"></i>Yes
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+}
+
+function confirmAvail(propertyId, propertyName, event) {
+    // Close modal
+    event.target.closest('.fixed').remove();
+    
+    // Show success message
+    const successModal = document.createElement('div');
+    successModal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+    successModal.innerHTML = `
+        <div class="bg-white rounded-lg shadow-lg p-8 max-w-sm mx-4 text-center">
+            <div class="flex items-center justify-center w-16 h-16 mx-auto bg-green-100 rounded-full mb-4">
+                <i class="fa-solid fa-check text-green-600 text-2xl"></i>
+            </div>
+            <h3 class="text-lg font-bold text-gray-800 mb-2">Success!</h3>
+            <p class="text-gray-600 mb-6">
+                You have successfully availed "<strong>${propertyName}</strong>".<br>
+                <span class="text-sm">Proceeding to payment...</span>
+            </p>
+        </div>
+    `;
+    
+    document.body.appendChild(successModal);
+    
+    // Redirect to payment page after 2 seconds
+    setTimeout(() => {
+        window.location.href = `/payment/${propertyId}`;
+    }, 2000);
+}
+</script>
+{% endblock %}

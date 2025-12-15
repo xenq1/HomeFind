@@ -1,0 +1,93 @@
+{% extends 'admin_base.html.twig' %}
+
+{% block admin_title %}Users{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .user-table thead th {
+            text-align: center !important;
+        }
+        
+        .user-table tbody td {
+            text-align: center !important;
+        }
+    </style>
+{% endblock %}
+
+{% block admin_content %}
+<div class="w-full h-full py-6 px-6">
+    <div class="bg-gradient-to-r from-violet-50 to-purple-50 rounded-2xl p-8 mb-8 border border-violet-100">
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center">
+            <div>
+                <h1 class="text-3xl font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent flex items-center gap-3">
+                    <div class="bg-gradient-to-br from-violet-100 to-purple-50 p-3 rounded-xl border border-violet-200">
+                        <i class="fa-solid fa-users text-violet-600 text-xl"></i>
+                    </div>
+                    Users
+                </h1>
+                <p class="text-gray-600 mt-2">Manage system users and permissions</p>
+            </div>
+            <div class="mt-4 sm:mt-0">
+                {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('app_user_new') }}" class="inline-flex items-center bg-gradient-to-r from-emerald-600 to-green-600 text-white px-6 py-3 rounded-xl hover:shadow-lg transform hover:-translate-y-1 transition font-semibold">
+                    <i class="fa-solid fa-plus mr-2"></i> Add User
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-gradient-to-br from-white to-gray-50 border border-violet-100 rounded-2xl shadow-lg overflow-hidden">
+        <div class="p-6 overflow-x-auto">
+        <table class="user-table min-w-full text-sm text-left text-gray-700">
+            <thead class="bg-gray-50 border-b">
+                <tr>
+                    <th class="py-2 px-3 font-semibold">ID</th>
+                    <th class="py-2 px-3 font-semibold">Username</th>
+                    <th class="py-2 px-3 font-semibold">Created At</th>
+                    <th class="py-2 px-3 font-semibold">Roles</th>
+                    <th class="py-2 px-3 font-semibold">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for user in users %}
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="py-2 px-3">{{ user.id }}</td>
+                    <td class="py-2 px-3">{{ user.userIdentifier }}</td>
+                    <td class="py-2 px-3">{{ user.createdAt ? user.createdAt|date('Y-m-d H:i') : 'N/A' }}</td>
+                    <td class="py-2 px-3">{{ user.roles ? user.roles|join(', ') : 'ROLE_USER' }}</td>
+                    <td class="py-2 px-3 space-x-2">
+                        <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="text-amber-600 hover:text-amber-800 transition" title="Edit">
+                            <i class="fa-solid fa-pen-to-square text-lg"></i>
+                        </a>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <form method="post" action="{{ path('app_user_toggle_enabled', {'id': user.id}) }}" style="display:inline;" onsubmit="return confirm('Are you sure you want to toggle this user\'s status?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('toggle_enabled' ~ user.id) }}">
+                                <button type="submit" class="text-gray-700 hover:text-gray-900 transition" title="{{ user.isEnabled ? 'Disable' : 'Enable' }}">
+                                    {% if user.isEnabled %}
+                                        <i class="fa-solid fa-user-slash text-lg"></i>
+                                    {% else %}
+                                        <i class="fa-solid fa-user-check text-lg"></i>
+                                    {% endif %}
+                                </button>
+                            </form>
+                            <form method="post" action="{{ path('app_user_delete', {'id': user.id}) }}" style="display:inline;" onsubmit="return confirm('Are you sure?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+                                <button type="submit" class="text-red-600 hover:text-red-800 transition" title="Delete">
+                                    <i class="fa-solid fa-trash-alt text-lg"></i>
+                                </button>
+                            </form>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5" class="py-6 text-center text-gray-500">No users found.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

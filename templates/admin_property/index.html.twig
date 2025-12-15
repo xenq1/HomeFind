@@ -1,0 +1,366 @@
+{% extends 'admin_base.html.twig' %}
+
+{% block title %}Manage Properties{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {# ✅ DataTables + Tailwind CSS Integration #}
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.2/css/dataTables.tailwindcss.min.css">
+
+    <style>
+        /* --- Responsive Table - No Horizontal Scroll --- */
+        .dataTables_wrapper {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+
+        #propertyTable {
+            width: 100% !important;
+            table-layout: fixed !important;
+            max-width: 100% !important;
+        }
+
+        #propertyTable thead th {
+            width: auto !important;
+            background: linear-gradient(135deg, #059669 0%, #047857 50%, #065f46 100%) !important;
+            color: white !important;
+            font-weight: 600 !important;
+            letter-spacing: 0.3px;
+            border-right: 1px solid rgba(255, 255, 255, 0.2) !important;
+            text-align: center !important;
+        }
+
+        #propertyTable thead th:last-child {
+            border-right: none !important;
+        }
+
+        /* --- Remove sort indicators --- */
+        table.dataTable thead .sorting::after,
+        table.dataTable thead .sorting_asc::after,
+        table.dataTable thead .sorting_desc::after {
+            display: none !important;
+        }
+
+        table.dataTable thead .sorting::before,
+        table.dataTable thead .sorting_asc::before,
+        table.dataTable thead .sorting_desc::before {
+            display: none !important;
+        }
+
+        /* --- Custom Tailwind Styling for DataTable UI --- */
+        .dataTables_wrapper {
+            background: transparent !important;
+        }
+
+        .dataTables_wrapper .dataTables_filter {
+            margin-bottom: 1.5rem !important;
+        }
+
+        .dataTables_wrapper .dataTables_filter input {
+            border: 2px solid #059669 !important;
+            border-radius: 0.75rem !important;
+            padding: 0.75rem 1rem !important;
+            font-size: 0.875rem !important;
+            background: linear-gradient(135deg, #047857 0%, #059669 100%) !important;
+            color: white !important;
+            transition: all 0.2s ease !important;
+            width: 100% !important;
+        }
+
+        .dataTables_wrapper .dataTables_filter input:focus {
+            background: linear-gradient(135deg, #065f46 0%, #047857 100%) !important;
+            outline: none !important;
+            ring: 2px !important;
+            ring-color: rgba(5, 150, 105, 0.5) !important;
+        }
+
+        .dataTables_wrapper .dataTables_filter input::placeholder {
+            color: rgba(255, 255, 255, 0.6) !important;
+        }
+
+        .dataTables_wrapper .dataTables_filter label {
+            @apply text-gray-700 font-medium flex items-center gap-2;
+        }
+
+        .dataTables_wrapper .dataTables_filter label::before {
+            content: '🔍';
+            font-size: 0.9rem;
+        }
+
+        .dataTables_wrapper .dataTables_length {
+            margin-bottom: 1.5rem !important;
+        }
+
+        .dataTables_wrapper .dataTables_length select {
+            @apply border-2 border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition;
+            background: white;
+            color: #9ca3af;
+        }
+
+        .dataTables_wrapper .dataTables_length label {
+            @apply text-gray-700 font-medium;
+        }
+
+        .dataTables_wrapper .dataTables_paginate {
+            @apply mt-6 flex justify-between items-center pt-4 border-t border-gray-200;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            @apply px-4 py-2 border-2 border-gray-300 rounded-xl text-sm font-medium text-gray-700 hover:bg-emerald-500 hover:text-white hover:border-emerald-500 transition;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            @apply bg-emerald-600 text-white border-emerald-600;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+            @apply opacity-50 cursor-not-allowed;
+        }
+
+        .dataTables_wrapper .dataTables_info {
+            @apply text-gray-600 text-sm font-medium;
+        }
+
+        /* --- Smooth Table Hover and Look --- */
+        table.dataTable tbody tr {
+            transition: all 0.2s ease;
+            background-color: #ffffff !important;
+        }
+
+        table.dataTable tbody tr:hover {
+            @apply bg-white;
+            box-shadow: inset 2px 0 0 #059669;
+        }
+
+        table.dataTable tbody td {
+            @apply text-gray-700;
+            vertical-align: middle;
+            border-right: 1px solid #e5e7eb !important;
+        }
+
+        table.dataTable tbody td:last-child {
+            border-right: none !important;
+        }
+
+        /* --- Column specific styles for better distribution --- */
+        #propertyTable tbody td {
+            padding: 14px 12px !important;
+            word-break: break-word;
+            text-align: center !important;
+        }
+
+        #propertyTable tbody td:nth-child(1) { width: 5% !important; }   /* ID */
+        #propertyTable tbody td:nth-child(2) { width: 8% !important; }   /* Image */
+        #propertyTable tbody td:nth-child(3) { width: 12% !important; }  /* Name */
+        #propertyTable tbody td:nth-child(4) { width: 12% !important; }  /* Location */
+        #propertyTable tbody td:nth-child(5) { width: 10% !important; }  /* Price */
+        #propertyTable tbody td:nth-child(6) { width: 10% !important; }  /* Status */
+        #propertyTable tbody td:nth-child(7) { width: 10% !important; }  /* Listing Type */
+        #propertyTable tbody td:nth-child(8) { width: 8% !important; }   /* Area */
+        #propertyTable tbody td:nth-child(9) { width: 10% !important; }  /* Type */
+        #propertyTable tbody td:nth-child(10) { width: 15% !important; } /* Actions */
+
+        /* --- Image styling --- */
+        #propertyTable img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* --- Force actions to fit --- */
+        #propertyTable td.text-center {
+            text-align: center !important;
+        }
+
+        /* --- Action links styling --- */
+        #propertyTable td a {
+            @apply font-semibold transition-all duration-200;
+            text-decoration: none;
+        }
+
+        #propertyTable td a:hover {
+            text-decoration: underline;
+        }
+
+        /* --- Badge/Status styling --- */
+        .badge {
+            display: inline-block;
+            border-radius: 9999px;
+            padding: 0.375rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        /* --- Empty state --- */
+        .dataTables_empty {
+            @apply text-center py-12 text-gray-500;
+        }
+    </style>
+{% endblock %}
+
+{% block admin_title %}Manage Properties{% endblock %}
+{% block admin_content %}
+<div class="w-full h-full py-6 px-6">
+    <div class="bg-gradient-to-r from-emerald-50 to-blue-50 rounded-2xl p-8 mb-8 border border-emerald-100">
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center">
+            <div>
+                <h1 class="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-emerald-700 bg-clip-text text-transparent flex items-center gap-3">
+                    <div class="bg-gradient-to-br from-emerald-100 to-emerald-50 p-3 rounded-xl border border-emerald-200">
+                        <i class="fa-solid fa-house text-emerald-600 text-xl"></i>
+                    </div> 
+                    Property Management
+                </h1>
+                <p class="text-gray-600 mt-2">View and manage all properties in your portfolio</p>
+            </div>
+        <a href="{{ path('admin_property_new') }}"
+           class="mt-4 sm:mt-0 inline-flex items-center bg-gradient-to-r from-emerald-600 to-emerald-700 text-white px-6 py-3 rounded-xl hover:shadow-lg transform hover:-translate-y-1 transition font-semibold">
+            <i class="fa-solid fa-plus mr-2"></i> Add New Property
+        </a>
+    </div>
+</div>
+    <div class="bg-gradient-to-br from-white to-gray-50 border border-emerald-100 rounded-2xl shadow-lg overflow-hidden">
+        <!-- Table Container -->
+        <div class="p-6 overflow-x-auto">
+            <table id="propertyTable" class="w-full text-sm text-left text-gray-700">
+                <thead>
+                    <tr>
+                        <th class="py-4 px-4 text-white">ID</th>
+                        <th class="py-4 px-4 text-white">Image</th>
+                        <th class="py-4 px-4 text-white">Name</th>
+                        <th class="py-4 px-4 text-white">Location</th>
+                        <th class="py-4 px-4 text-white">Price</th>
+                        <th class="py-4 px-4 text-white">Status</th>
+                        <th class="py-4 px-4 text-white">Listing Type</th>
+                        <th class="py-4 px-4 text-white">Area</th>
+                        <th class="py-4 px-4 text-white">Type</th>
+                        <th class="py-4 px-4 text-white text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for property in properties %}
+                    <tr class="border-b border-gray-100 hover:bg-white transition">
+                        <td class="py-4 px-4 font-mono text-sm text-gray-500">{{ property.id }}</td>
+                        <td class="py-4 px-4">
+                            {% if property.image %}
+                                <img src="{{ property.image }}" alt="{{ property.name }}" class="w-16 h-16 object-cover rounded-lg shadow-sm">
+                            {% else %}
+                                <div class="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center">
+                                    <i class="fa-solid fa-image text-gray-400"></i>
+                                </div>
+                            {% endif %}
+                        </td>
+                        <td class="py-4 px-4 font-semibold text-gray-900">{{ property.name }}</td>
+                        <td class="py-4 px-4 text-gray-600">{{ property.location }}</td>
+                        <td class="py-4 px-4 font-bold text-emerald-600">
+                            ₱{{ property.price|number_format(2) }}{% if property.listingType == 'for_rent' %}<span class="text-sm text-gray-600">/mo</span>{% endif %}
+                        </td>
+                        <td class="py-4 px-4">
+                            {% if property.status == 'available' %}
+                                <span class="badge bg-green-100 text-green-700">
+                                    <i class="fa-solid fa-circle-check mr-1"></i> Available
+                                </span>
+                            {% elseif property.status == 'sold' %}
+                                <span class="badge bg-red-100 text-red-700">
+                                    <i class="fa-solid fa-check-double mr-1"></i> Sold
+                                </span>
+                            {% elseif property.status == 'on rent' %}
+                                <span class="badge bg-blue-100 text-blue-700">
+                                    <i class="fa-solid fa-key mr-1"></i> On Rent
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td class="py-4 px-4">
+                            {% if property.listingType == 'for_sale' %}
+                                <span class="badge bg-purple-100 text-purple-700">
+                                    <i class="fa-solid fa-tag mr-1"></i> For Sale
+                                </span>
+                            {% elseif property.listingType == 'for_rent' %}
+                                <span class="badge bg-orange-100 text-orange-700">
+                                    <i class="fa-solid fa-handshake mr-1"></i> For Rent
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td class="py-4 px-4">
+                            <span class="font-medium text-gray-800">{{ property.area }}</span>
+                            <span class="text-gray-500">m²</span>
+                        </td>
+                        <td class="py-4 px-4">
+                            {% if property.type %}
+                                <span class="badge bg-emerald-100 text-emerald-700">
+                                    {{ property.type }}
+                                </span>
+                            {% else %}
+                                <span class="text-gray-400 text-xs italic">N/A</span>
+                            {% endif %}
+                        </td>
+                        <td class="py-4 px-4 text-center">
+                            <div class="flex gap-3 justify-center">
+                                <a href="{{ path('admin_property_show', {'id': property.id}) }}"
+                                   class="text-blue-600 hover:text-blue-800 transition" title="View">
+                                    <i class="fa-solid fa-eye text-lg"></i>
+                                </a>
+                                {% if is_granted('ROLE_ADMIN') or property.createdBy == app.user %}
+                                    <a href="{{ path('admin_property_edit', {'id': property.id}) }}"
+                                       class="text-amber-600 hover:text-amber-800 transition" title="Edit">
+                                        <i class="fa-solid fa-pen-to-square text-lg"></i>
+                                    </a>
+                                    <form method="POST" action="{{ path('admin_property_delete', {'id': property.id}) }}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this property?');">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ property.id) }}">
+                                        <button type="submit" class="text-red-600 hover:text-red-800 transition" title="Delete">
+                                            <i class="fa-solid fa-trash-alt text-lg"></i>
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <span class="text-gray-400 text-xs italic">No access</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="9" class="py-12 text-center">
+                            <i class="fa-solid fa-inbox text-gray-300 text-4xl mb-4"></i>
+                            <p class="text-gray-500 mt-2">No properties found.</p>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/2.1.2/js/dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/2.1.2/js/dataTables.tailwindcss.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            let table = $('#propertyTable').DataTable({
+                responsive: true,
+                pageLength: 5,
+                lengthMenu: [5, 10, 25, 50],
+                order: [],
+                columnDefs: [
+                    { 
+                        targets: '_all', 
+                        orderable: false,
+                        className: 'dt-head-nowrap'
+                    }
+                ],
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search",
+                    lengthMenu: "Show _MENU_ per page",
+                    info: "Showing _START_–_END_ of _TOTAL_ properties",
+                    paginate: { previous: "Prev", next: "Next" },
+                    zeroRecords: "No matching properties found"
+                }
+            });
+        });
+    </script>
+{% endblock %}

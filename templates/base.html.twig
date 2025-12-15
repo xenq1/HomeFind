@@ -1,17 +1,95 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Welcome!{% endblock %}</title>
 
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
-    </head>
-    <body>
+    {# ✅ Font Awesome (icons) #}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    {# ✅ Tailwind CSS CDN #}
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    {# ✅ Alpine.js for interactive components #}
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    {# ✅ Page-specific stylesheets (Encore or custom CSS) #}
+    {% block stylesheets %}
+        {# Example: {{ encore_entry_link_tags('app') }} #}
+    {% endblock %}
+</head>
+
+<body class="bg-gray-50 text-gray-900 flex flex-col min-h-screen">
+
+    {# ✅ Navbar #}
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="{{ path('app_home') }}" class="text-2xl font-bold text-emerald-600 flex items-center gap-2">
+                <i class="fa-solid fa-home"></i> HomeFind
+            </a>
+
+            <div class="flex gap-4 items-center">
+                {% if app.user %}
+                    {# User is logged in #}
+                    {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_STAFF') %}
+                        <a href="{{ path('app_dashboard') }}" class="px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100">
+                            <i class="fa-solid fa-home"></i> Dashboard
+                        </a>
+                    {% else %}
+                        <a href="{{ path('public_property_index') }}" class="px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100">
+                            <i class="fa-solid fa-home"></i> Browse
+                        </a>
+                    {% endif %}
+                    
+                    <div class="relative" x-data="{ open: false }">
+                        <button @click="open = !open" class="px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                            <i class="fa-solid fa-user-circle"></i> {{ app.user.username }}
+                            <i class="fa-solid fa-chevron-down text-xs" :class="{ 'rotate-180': open }"></i>
+                        </button>
+                        <div @click.away="open = false" x-show="open" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10">
+                            <a href="{{ path('app_logout') }}" class="block w-full text-left px-4 py-3 text-gray-700 hover:bg-gray-100 border-t">
+                                <i class="fa-solid fa-sign-out-alt mr-2"></i> Logout
+                            </a>
+                        </div>
+                    </div>
+                {% else %}
+                    {# User is not logged in #}
+                    <a href="{{ path('public_property_index') }}" class="px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100">
+                        <i class="fa-solid fa-house"></i> Browse
+                    </a>
+                    <a href="{{ path('app_login') }}" class="px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100">
+                        <i class="fa-solid fa-sign-in-alt"></i> Login
+                    </a>
+                    <a href="{{ path('app_register') }}" class="px-4 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700">
+                        <i class="fa-solid fa-user-plus"></i> Sign Up
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    {# ✅ Main Page Content #}
+    <main class="flex-grow">
         {% block body %}{% endblock %}
-    </body>
+    </main>
+
+    {# ✅ Footer #}
+    <footer class="bg-gray-900 text-gray-300 py-6 mt-8">
+        <div class="container mx-auto px-6 text-center text-sm">
+            <p>&copy; {{ "now"|date("Y") }} HomeFind. All rights reserved.</p>
+        </div>
+    </footer>
+
+    {# ✅ Global Scripts (JS libraries, Alpine, etc.) #}
+    {% block javascripts %}
+        {# Example: {{ encore_entry_script_tags('app') }} #}
+        <script>
+            // Example: reusable alert function
+            function confirmDelete() {
+                return confirm('Are you sure you want to delete this item?');
+            }
+        </script>
+    {% endblock %}
+</body>
 </html>

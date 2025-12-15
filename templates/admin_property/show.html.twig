@@ -1,0 +1,89 @@
+{% extends 'admin_base.html.twig' %}
+
+{% block admin_title %}{{ property.name }}{% endblock %}
+
+{% block admin_content %}
+<div class="w-full h-full py-6 px-6">
+    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-8 mb-8 border border-blue-100">
+        <h1 class="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">{{ property.name }}</h1>
+        <p class="text-gray-600 mt-2">View property details and information</p>
+    </div>
+
+    <div class="bg-gradient-to-br from-white to-gray-50 border border-blue-100 rounded-2xl shadow-lg p-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+                <div class="space-y-4">
+                    <div class="border-b border-gray-200 pb-3">
+                        <p class="text-gray-600 text-sm font-medium">Location</p>
+                        <p class="text-gray-900 text-lg font-semibold">{{ property.location }}</p>
+                    </div>
+                    <div class="border-b border-gray-200 pb-3">
+                        <p class="text-gray-600 text-sm font-medium">Price</p>
+                        <p class="text-emerald-600 text-lg font-bold">₱{{ property.price|number_format(2) }}</p>
+                    </div>
+                    <div class="border-b border-gray-200 pb-3">
+                        <p class="text-gray-600 text-sm font-medium">Area</p>
+                        <p class="text-gray-900 text-lg font-semibold">{{ property.area }} m²</p>
+                    </div>
+                    <div class="border-b border-gray-200 pb-3">
+                        <p class="text-gray-600 text-sm font-medium">Type</p>
+                        <p class="text-gray-900 text-lg font-semibold">{{ property.type }}</p>
+                    </div>
+                    <div class="border-b border-gray-200 pb-3">
+                        <p class="text-gray-600 text-sm font-medium">Listing Type</p>
+                        <div>
+                            {% if property.listingType == 'for_sale' %}
+                                <span class="inline-block bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm font-semibold">
+                                    <i class="fa-solid fa-tag mr-1"></i> For Sale
+                                </span>
+                            {% elseif property.listingType == 'for_rent' %}
+                                <span class="inline-block bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm font-semibold">
+                                    <i class="fa-solid fa-handshake mr-1"></i> For Rent
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="pb-3">
+                        <p class="text-gray-600 text-sm font-medium">Status</p>
+                        <div>
+                            {% if property.status == 'available' %}
+                                <span class="inline-block bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
+                                    <i class="fa-solid fa-circle-check mr-1"></i> Available
+                                </span>
+                            {% elseif property.status == 'sold' %}
+                                <span class="inline-block bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-semibold">
+                                    <i class="fa-solid fa-check-double mr-1"></i> Sold
+                                </span>
+                            {% elseif property.status == 'on rent' %}
+                                <span class="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-semibold">
+                                    <i class="fa-solid fa-key mr-1"></i> On Rent
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                {% if property.image %}
+                    <img src="{{ property.image }}" alt="{{ property.name }}" class="rounded-2xl shadow-lg max-w-full h-auto border border-gray-200">
+                {% else %}
+                    <div class="bg-gradient-to-br from-gray-200 to-gray-300 rounded-2xl h-64 flex items-center justify-center">
+                        <i class="fa-solid fa-image text-gray-500 text-4xl"></i>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="mt-8 flex gap-3 border-t border-gray-200 pt-6">
+            {% if is_granted('ROLE_ADMIN') or (is_granted('ROLE_STAFF') and property.createdBy == app.user) %}
+            <a href="{{ path('admin_property_edit', {'id': property.id}) }}" class="inline-flex items-center bg-gradient-to-r from-amber-600 to-orange-600 text-white px-6 py-3 rounded-xl hover:shadow-lg transition font-semibold">
+                <i class="fa-solid fa-pen-to-square mr-2"></i> Edit
+            </a>
+            {% endif %}
+            <a href="{{ path('admin_property_index') }}" class="inline-flex items-center bg-gray-200 text-gray-800 px-6 py-3 rounded-xl hover:bg-gray-300 transition font-semibold">
+                <i class="fa-solid fa-arrow-left mr-2"></i> Back
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

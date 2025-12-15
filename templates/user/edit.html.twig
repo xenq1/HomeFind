@@ -1,0 +1,108 @@
+{% extends 'admin_base.html.twig' %}
+
+{% block admin_title %}Edit User{% endblock %}
+
+{% block admin_content %}
+<div class="w-full h-full py-6 px-6">
+    <!-- Header Section -->
+    <div class="bg-gradient-to-r from-rose-50 to-pink-50 rounded-2xl p-8 mb-8 border border-rose-100">
+        <h1 class="text-3xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent flex items-center gap-3">
+            <div class="bg-gradient-to-br from-rose-100 to-pink-50 p-3 rounded-xl border border-rose-200">
+                <i class="fa-solid fa-user-pen text-rose-600 text-xl"></i>
+            </div>
+            Edit User
+        </h1>
+        <p class="text-gray-600 mt-2">Update user account information</p>
+    </div>
+
+    <!-- Main Container -->
+    <div class="bg-gradient-to-br from-white to-gray-50 border border-rose-100 rounded-2xl shadow-lg overflow-hidden max-w-2xl">
+        <div class="p-8">
+            {% if form.vars.errors|length > 0 %}
+                <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                    <strong>Form errors:</strong>
+                    {{ form_errors(form) }}
+                </div>
+            {% endif %}
+
+            {{ form_start(form, { 'attr': { 'class': 'space-y-6' } }) }}
+
+                <!-- Username Section -->
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-user text-rose-600"></i>
+                        Account Details
+                    </h3>
+                    <div>
+                        {{ form_label(form.username, 'Username', { 'label_attr': { 'class': 'block text-sm font-medium text-gray-700 mb-2' } }) }}
+                        {{ form_widget(form.username, { 'attr': {'class': 'w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent transition', 'placeholder': 'Enter username'} }) }}
+                        {% if form.username.vars.errors %}
+                            <div class="mt-2 text-sm text-red-600 space-y-1">
+                                {% for error in form.username.vars.errors %}
+                                    <div>{{ error.message }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <hr class="border-gray-200">
+
+                <!-- Password Section -->
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-lock text-rose-600"></i>
+                        Change Password
+                    </h3>
+                    <div>
+                        {{ form_label(form.plainPassword, 'New Password (leave blank to keep current)', { 'label_attr': { 'class': 'block text-sm font-medium text-gray-700 mb-2' } }) }}
+                        {{ form_widget(form.plainPassword, { 'attr': {'class': 'w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent transition', 'placeholder': 'Enter new password'} }) }}
+                        {% if form.plainPassword.vars.errors %}
+                            <div class="mt-2 text-sm text-red-600 space-y-1">
+                                {% for error in form.plainPassword.vars.errors %}
+                                    <div>{{ error.message }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <hr class="border-gray-200">
+
+                <!-- Roles Section -->
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-shield text-rose-600"></i>
+                        Roles & Permissions
+                    </h3>
+                    <div class="space-y-3 bg-gray-50 p-4 rounded-lg">
+                        <div class="flex items-center">
+                            <input type="checkbox" name="roles_user" id="roles_user" class="w-4 h-4 rounded border-gray-300 text-rose-600 cursor-pointer" {% if 'ROLE_USER' in user.roles %}checked{% endif %}>
+                            <label for="roles_user" class="ml-3 font-medium text-gray-700 cursor-pointer">User (Browse Only)</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" name="roles_admin" id="roles_admin" class="w-4 h-4 rounded border-gray-300 text-rose-600 cursor-pointer" {% if 'ROLE_ADMIN' in user.roles %}checked{% endif %}>
+                            <label for="roles_admin" class="ml-3 font-medium text-gray-700 cursor-pointer">Admin (Full Access)</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" name="roles_staff" id="roles_staff" class="w-4 h-4 rounded border-gray-300 text-rose-600 cursor-pointer" {% if 'ROLE_STAFF' in user.roles %}checked{% endif %}>
+                            <label for="roles_staff" class="ml-3 font-medium text-gray-700 cursor-pointer">Staff (Manage Properties)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="border-gray-200">
+                <div class="flex gap-3 pt-4">
+                    <button type="submit" class="inline-flex items-center bg-gradient-to-r from-rose-600 to-pink-600 text-white px-8 py-3 rounded-xl hover:shadow-lg transform hover:-translate-y-1 transition font-semibold">
+                        <i class="fa-solid fa-check mr-2"></i> Update User
+                    </button>
+                    <a href="{{ path('app_user_index') }}" class="inline-flex items-center bg-gray-200 text-gray-800 px-8 py-3 rounded-xl hover:bg-gray-300 transition font-semibold">
+                        <i class="fa-solid fa-arrow-left mr-2"></i> Cancel
+                    </a>
+                </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

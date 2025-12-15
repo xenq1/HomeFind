@@ -1,6 +1,11 @@
 # see https://symfony.com/doc/current/reference/configuration/framework.html
 framework:
     secret: '%env(APP_SECRET)%'
+    trusted_hosts:
+        - 'localhost'
+        - '127\.0\.0\.1'
+        - '^.*\.ngrok\.io$'
+        - '^.*\.ngrok-free\.dev$'
 
     # Note that the session will be started ONLY if you read or write from it.
     session: true

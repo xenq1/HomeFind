@@ -1,0 +1,129 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ property.name }} - HomeFind{% endblock %}
+
+{% block body %}
+<div class="bg-gray-50 min-h-screen py-12">
+    <div class="container mx-auto px-6">
+        {# Back Button #}
+        <a href="{{ path('public_property_index') }}" class="inline-flex items-center text-emerald-600 hover:text-emerald-700 mb-6">
+            <i class="fa-solid fa-arrow-left mr-2"></i> Back to Properties
+        </a>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {# Main Image #}
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    {% if property.image %}
+                        <img src="{{ asset(property.image) }}" alt="{{ property.name }}" class="w-full h-96 object-cover">
+                    {% else %}
+                        <div class="w-full h-96 bg-gray-300 flex items-center justify-center">
+                            <i class="fa-solid fa-image text-gray-400 text-6xl"></i>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {# Property Details Sidebar #}
+            <div class="space-y-6">
+                {# Price and Status Card #}
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <p class="text-3xl font-bold text-emerald-600 mb-4">
+                        ₱{{ property.price|number_format(2, '.', ',') }}
+                    </p>
+                    
+                    <div>
+                        {% if property.status == 'available' %}
+                            <span class="inline-block bg-green-100 text-green-700 text-sm font-semibold px-4 py-2 rounded-full">
+                                <i class="fa-solid fa-circle-check mr-1"></i> Available
+                            </span>
+                        {% elseif property.status == 'sold' %}
+                            <span class="inline-block bg-red-100 text-red-700 text-sm font-semibold px-4 py-2 rounded-full">
+                                <i class="fa-solid fa-check-double mr-1"></i> Sold
+                            </span>
+                        {% elseif property.status == 'on rent' %}
+                            <span class="inline-block bg-blue-100 text-blue-700 text-sm font-semibold px-4 py-2 rounded-full">
+                                <i class="fa-solid fa-key mr-1"></i> On Rent
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {# Quick Info Card #}
+                <div class="bg-white rounded-xl shadow-lg p-6 space-y-4">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Property Details</h3>
+                    
+                    <div class="flex items-center justify-between border-b pb-3">
+                        <span class="text-gray-600"><i class="fa-solid fa-ruler text-blue-500 mr-2"></i> Area</span>
+                        <span class="font-semibold text-gray-800">{{ property.area }} m²</span>
+                    </div>
+
+                    <div class="flex items-center justify-between border-b pb-3">
+                        <span class="text-gray-600"><i class="fa-solid fa-building text-purple-500 mr-2"></i> Type</span>
+                        <span class="font-semibold text-gray-800">{{ property.type ?? 'N/A' }}</span>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-600"><i class="fa-solid fa-map-marker text-emerald-600 mr-2"></i> Location</span>
+                        <span class="font-semibold text-gray-800">{{ property.location }}</span>
+                    </div>
+                </div>
+
+                {# Contact Card #}
+                <div class="bg-emerald-600 text-white rounded-xl shadow-lg p-6 text-center">
+                    <h3 class="text-lg font-bold mb-4">Interested?</h3>
+                    <button class="w-full bg-white text-emerald-600 font-bold py-3 px-4 rounded-lg hover:bg-gray-100 transition">
+                        <i class="fa-solid fa-phone mr-2"></i> Contact Agent
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        {# Property Description #}
+        <div class="mt-12 bg-white rounded-xl shadow-lg p-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                <i class="fa-solid fa-house mr-2 text-emerald-600"></i>{{ property.name }}
+            </h2>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+                <div class="text-center">
+                    <p class="text-3xl font-bold text-emerald-600">{{ property.area }}</p>
+                    <p class="text-gray-600 text-sm">Square Meters</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-3xl font-bold text-emerald-600">₱{{ property.price|number_format(0, '', ',') }}</p>
+                    <p class="text-gray-600 text-sm">Price</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-2xl font-bold text-emerald-600">{{ property.type }}</p>
+                    <p class="text-gray-600 text-sm">Property Type</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-lg font-bold text-emerald-600 capitalize">{{ property.status }}</p>
+                    <p class="text-gray-600 text-sm">Status</p>
+                </div>
+            </div>
+
+            <p class="text-gray-700 leading-relaxed">
+                This beautiful property is located in {{ property.location }}. With an area of {{ property.area }} m², 
+                this {{ property.type }} offers excellent potential for investment or personal use. 
+                Currently marked as <strong>{{ property.status|capitalize }}</strong>, this is a great opportunity 
+                to own a piece of premium real estate.
+            </p>
+        </div>
+
+        {# Similar Properties #}
+        <div class="mt-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                <i class="fa-solid fa-fire mr-2 text-emerald-600"></i>More Properties
+            </h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <a href="{{ path('public_property_index') }}" class="bg-white rounded-xl shadow hover:shadow-lg transition p-6 text-center">
+                    <i class="fa-solid fa-arrow-right text-emerald-600 text-2xl mb-3"></i>
+                    <p class="font-semibold text-gray-800">Browse All Properties</p>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
