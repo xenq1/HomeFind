@@ -34,11 +34,11 @@
                     {# User is logged in #}
                     {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_STAFF') %}
                         <a href="{{ path('app_dashboard') }}" class="px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100">
-                            <i class="fa-solid fa-home"></i> Dashboard
+                            <i class="fa-solid fa-chart-line"></i> Dashboard
                         </a>
                     {% else %}
                         <a href="{{ path('public_property_index') }}" class="px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100">
-                            <i class="fa-solid fa-home"></i> Browse
+                            <i class="fa-solid fa-search"></i> Browse
                         </a>
                     {% endif %}
                     
@@ -48,7 +48,7 @@
                             <i class="fa-solid fa-chevron-down text-xs" :class="{ 'rotate-180': open }"></i>
                         </button>
                         <div @click.away="open = false" x-show="open" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10">
-                            <a href="{{ path('app_logout') }}" class="block w-full text-left px-4 py-3 text-gray-700 hover:bg-gray-100 border-t">
+                            <a href="{{ path('app_logout') }}" class="block w-full text-left px-4 py-3 text-red-600 hover:bg-gray-100 border-t">
                                 <i class="fa-solid fa-sign-out-alt mr-2"></i> Logout
                             </a>
                         </div>

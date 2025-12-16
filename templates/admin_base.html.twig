@@ -19,6 +19,9 @@
                 </a>
                 <nav class="flex items-center gap-4">
                     {% if app.user %}
+                        <a href="{{ path('public_property_index') }}" class="px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100">
+                                <i class="fa-solid fa-search"></i> Browse
+                        </a>
                         <div class="relative" x-data="{ open: false }">
                             <button @click="open = !open" class="px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100 flex items-center gap-2">
                                 <i class="fa-solid fa-user-circle"></i> {{ app.user.userIdentifier }}
